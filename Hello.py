@@ -17,35 +17,48 @@ from streamlit.logger import get_logger
 
 LOGGER = get_logger(__name__)
 
+import PyPDF2
+
+client=OpenAI(api_key=st.secrets['OPENAI_API_KEY'])
+
+def rubric_essay(rubric,essay):
+  prompt = f'''
+  Please evaluate the essay according to the rubric{rubric}
+  Essay is {essay}
+   '''
+  for response in client.chat.completions.create(
+              model="gpt-3.5-turbo",
+              messages=[{"role": m["role"], "content": m["content"]}
+                        for m in st.session_state.messages], stream=True):
+
+def pdf_to_text(uploaded_file):
+    pdfReader = PyPDF2.PdfReader(uploaded_file)
+    count = len(pdfReader.pages)
+    text=""
+    for i in range(count):
+        page = pdfReader.pages[i]
+        text=text+page.extract_text()
+    return text
 
 def run():
     st.set_page_config(
         page_title="Hello",
         page_icon="👋",
     )
+    st.markdown("Upload rubric")
+    rubric_text = st.text_area("Enter rubric","")
 
-    st.write("# Welcome to Streamlit! 👋")
-
-    st.sidebar.success("Select a demo above.")
-
-    st.markdown(
-        """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
-    """
-    )
-
+    st.markdown("# Upload essay: PDF")
+    uploaded_file=st.file_uploader("Upload essay",type="pdf")
+    if uploaded_file is not None:
+        pdf_text = pdf_to_text(uploaded_file)
+        with st.expander("rubric"):
+          st.write(f"{rubric_text}")
+        with st.expander("pdf text"):
+          st.write(f"{pdf_text}")
+        
+        result=rubric_essay(rubric_text,pdf_text)
 
 if __name__ == "__main__":
     run()
+
