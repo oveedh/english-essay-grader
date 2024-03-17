@@ -4,3 +4,8 @@ pandas
 pydeck
 streamlit
 PyPDF2
+openai
+unstructured
+pdf2image
+langchain_community
+poppler-utils

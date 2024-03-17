@@ -18,6 +18,7 @@ from streamlit.logger import get_logger
 LOGGER = get_logger(__name__)
 
 import PyPDF2
+from openai import OpenAI
 
 client=OpenAI(api_key=st.secrets['OPENAI_API_KEY'])
 
@@ -26,10 +27,11 @@ def rubric_essay(rubric,essay):
   Please evaluate the essay according to the rubric{rubric}
   Essay is {essay}
    '''
-  for response in client.chat.completions.create(
+  response = client.chat.completions.create(
               model="gpt-3.5-turbo",
-              messages=[{"role": m["role"], "content": m["content"]}
-                        for m in st.session_state.messages], stream=True):
+              messages=[{"role": 'user', "content":prompt}]
+  )
+  st.write(response)
 
 def pdf_to_text(uploaded_file):
     pdfReader = PyPDF2.PdfReader(uploaded_file)
