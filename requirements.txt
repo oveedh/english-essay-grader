@@ -9,3 +9,15 @@ unstructured
 pdf2image
 langchain_community
 poppler-utils
+streamlit
+pandas
+openai
+langchain
+langchain-community
+langchain-openai
+pinecone-client
+pdfminer
+pdfplumber
+pytesseract
+pdf2image
+PyPDF2
