@@ -28,6 +28,7 @@ SYSTEM_MESSAGE={"role": "system",
                 You are helpful and patient and provide constructive feedback
                 Rubric is {rubric_text}
                 Essay is {text_content}
+                provide the response as a JSON object
 
                 '''
                 
@@ -98,7 +99,8 @@ if prompt := st.chat_input("What is up?"):
         for response in client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": m["role"], "content": m["content"]}
-                      for m in st.session_state.messages], stream=True):
+                      for m in st.session_state.messages], 
+            response_format={ "type": "json_object" }):
             delta_response=response.choices[0].delta
             print(f"Delta response: {delta_response}")
             if delta_response.content:
