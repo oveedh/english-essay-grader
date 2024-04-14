@@ -21,3 +21,5 @@ pdfplumber
 pytesseract
 pdf2image
 PyPDF2
+unstructured-client
+unstructured
